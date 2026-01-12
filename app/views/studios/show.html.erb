@@ -1,0 +1,25 @@
+<% content_for :title, "Studio: #{@studio.name}" %>
+
+<h2 style="margin-bottom: 2rem; color: var(--text-secondary);">Movies produced by <%= @studio.name %></h2>
+
+<div class="movie-grid">
+  <% @movies.each do |movie| %>
+    <%= link_to movie_path(movie), class: "movie-card" do %>
+      <div class="movie-thumb-container">
+        <% if movie.poster_path.present? %>
+           <%= image_tag poster_movie_path(movie), class: "movie-thumb", loading: "lazy" %>
+        <% else %>
+           <div style="height: 100%; display: flex; align-items: center; justify-content: center; color: #666;">
+             No Image
+           </div>
+        <% end %>
+      </div>
+      <div class="movie-info">
+        <h3 class="movie-title" title="<%= movie.title %>"><%= movie.title %></h3>
+        <div class="movie-meta">
+           <%= movie.release_date&.year || "N/A" %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>

@@ -1,0 +1,42 @@
+<div style="max-width: 400px; margin: 4rem auto; padding: 2rem; background: var(--sidebar-bg); border-radius: 1rem; border: 1px solid var(--card-bg);">
+  <h1 style="text-align: center; margin-bottom: 2rem; color: var(--accent-color);">LewdVibe Login</h1>
+
+  <% if flash[:alert] %>
+    <div style="background: #fee2e2; color: #b91c1c; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1.5rem; font-size: 0.875rem; text-align: center;">
+      <%= flash[:alert] %>
+    </div>
+  <% end %>
+
+  <% if flash[:notice] %>
+    <div style="background: #dcfce7; color: #15803d; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1.5rem; font-size: 0.875rem; text-align: center;">
+      <%= flash[:notice] %>
+    </div>
+  <% end %>
+
+  <%= form_with url: session_path, local: true do |f| %>
+    <div style="margin-bottom: 1.5rem;">
+      <%= f.label :email_address, "Email Address", style: "display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.875rem;" %>
+      <%= f.email_field :email_address, required: true, autofocus: true, autocomplete: "email", 
+            placeholder: "you@example.com", 
+            class: "auth-input",
+            value: params[:email_address] %>
+    </div>
+
+    <div style="margin-bottom: 0.5rem;">
+      <%= f.label :password, "Password", style: "display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.875rem;" %>
+      <%= f.password_field :password, required: true, autocomplete: "current-password", 
+            placeholder: "Enter password",
+            class: "auth-input" %>
+    </div>
+
+    <div style="text-align: right; margin-bottom: 2rem;">
+      <%= link_to "Forgot password?", new_password_path, style: "font-size: 0.75rem; color: var(--text-secondary); text-decoration: none;" %>
+    </div>
+
+    <%= f.submit "Sign In", class: "download-btn", style: "width: 100%; justify-content: center; cursor: pointer; border: none;" %>
+  <% end %>
+
+  <div style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: var(--text-secondary);">
+    Don't have an account? <%= link_to "Sign Up", new_registration_path, style: "color: var(--accent-color); text-decoration: none;" %>
+  </div>
+</div>

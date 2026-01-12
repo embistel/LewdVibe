@@ -1,0 +1,92 @@
+<% content_for :title, @movie.title %>
+
+<div class="detail-container">
+  <div class="detail-poster">
+    <% if @movie.poster_path.present? %>
+       <%= image_tag poster_movie_path(@movie), alt: @movie.title %>
+    <% else %>
+       <div style="aspect-ratio: 2/3; background: #222; display: flex; align-items: center; justify-content: center; border-radius: 0.5rem; color: #666;">
+         No Poster
+       </div>
+    <% end %>
+
+    <div style="margin-top: 2rem;">
+      <% if @subtitles.any? %>
+        <% if authenticated? %>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <% @subtitles.each do |label, path| %>
+              <%= link_to download_subtitle_movie_path(@movie, lang: label), class: "download-btn" do %>
+                <i class="fas fa-closed-captioning"></i> <%= label %> (.srt)
+              <% end %>
+            <% end %>
+          </div>
+        <% else %>
+          <div style="padding: 1.5rem; background: #1e293b; border-radius: 0.5rem; text-align: center; border: 1px dashed var(--accent-color);">
+            <i class="fas fa-lock" style="color: var(--accent-color); margin-bottom: 0.5rem; font-size: 1.25rem;"></i>
+            <p style="font-size: 0.875rem; color: var(--text-primary); margin-bottom: 1rem;">Login required to download subtitles</p>
+            <%= link_to "Sign In to Download", new_session_path, class: "download-btn", style: "width: 100%; justify-content: center; font-size: 0.75rem; padding: 0.5rem;" %>
+          </div>
+        <% end %>
+      <% else %>
+        <div style="padding: 1rem; background: #1e293b; border-radius: 0.5rem; color: #94a3b8; font-size: 0.875rem; text-align: center;">
+          <i class="fas fa-info-circle"></i> No subtitle found in directory
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="detail-info">
+    <h1 class="detail-title"><%= @movie.title %></h1>
+
+    <div class="detail-meta-row">
+      <div class="meta-item">
+        <strong>Release Date</strong>
+        <span><%= @movie.release_date || "Unknown" %></span>
+      </div>
+      <div class="meta-item">
+        <strong>Studio</strong>
+        <% if @movie.studio %>
+          <%= link_to @movie.studio.name, studio_path(@movie.studio), class: "chip" %>
+        <% else %>
+          <span>N/A</span>
+        <% end %>
+      </div>
+      <div class="meta-item">
+        <strong>Director</strong>
+        <% if @movie.director %>
+          <%= link_to @movie.director.name, director_path(@movie.director), class: "chip" %>
+        <% else %>
+          <span>N/A</span>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="plot-summary">
+      <h3 style="color: var(--text-primary); margin-bottom: 0.5rem;">Plot Summary</h3>
+      <%= simple_format(@movie.plot) || "No plot description available." %>
+    </div>
+
+    <div class="actors-section">
+      <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Actors</h3>
+      <div class="actors-grid">
+        <% @movie.actors.each do |actor| %>
+          <%= link_to actor_path(actor), class: "actor-card" do %>
+            <% if actor.thumb_path.present? %>
+              <img src="<%= actor.thumb_path %>" class="actor-thumb" alt="<%= actor.name %>" onerror="this.src='https://ui-avatars.com/api/?name=<%= actor.name %>&background=random'">
+            <% else %>
+              <div class="actor-thumb" style="background: #1e293b; display: flex; align-items: center; justify-content: center; color: #475569;">
+                <i class="fas fa-user"></i>
+              </div>
+            <% end %>
+            <div style="font-size: 0.875rem; font-weight: 500;"><%= actor.name %></div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div style="margin-top: 3rem; padding: 2rem; background: #1e293b; border-radius: 0.5rem; border: 1px dashed #475569;">
+       <h3 style="color: var(--text-secondary); margin-bottom: 0.5rem;"><i class="fas fa-tasks"></i> Storyboard (Planned)</h3>
+       <p style="color: #64748b; font-size: 0.875rem;">Soon you'll be able to see a visual storyboard of the movie with screenshots synced to subtitles.</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>LewdVibe</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  </head>
+
+  <body class="app-body">
+    <div class="main-container">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <i class="fas fa-film mr-2"></i> LewdVibe
+        </div>
+        <nav class="nav-links">
+          <%= link_to movies_path, class: "nav-item #{'active' if controller_name == 'movies'}" do %>
+            <i class="fas fa-home w-6"></i> Movies
+          <% end %>
+          <%= link_to actors_path, class: "nav-item #{'active' if controller_name == 'actors'}" do %>
+            <i class="fas fa-users w-6"></i> Actors
+          <% end %>
+          <%= link_to studios_path, class: "nav-item #{'active' if controller_name == 'studios'}" do %>
+            <i class="fas fa-video w-6"></i> Studios
+          <% end %>
+          <%= link_to directors_path, class: "nav-item #{'active' if controller_name == 'directors'}" do %>
+            <i class="fas fa-chair w-6"></i> Directors
+          <% end %>
+        </nav>
+      </aside>
+
+      <div class="content-wrapper">
+        <header class="app-header">
+           <div class="page-title"><%= content_for?(:title) ? yield(:title) : "Movies" %></div>
+           
+           <% 
+             search_url = case controller_name
+                          when 'actors' then actors_path
+                          when 'studios' then studios_path
+                          when 'directors' then directors_path
+                          else movies_path
+                          end
+             placeholder = "Search #{controller_name.humanize.downcase}..."
+           %>
+
+           <%= form_with url: search_url, method: :get, local: true, class: "search-form" do |f| %>
+             <%= f.text_field :query, value: params[:query], placeholder: placeholder, class: "search-input" %>
+           <% end %>
+           
+           <div class="user-info">
+             <% if authenticated? %>
+               <div style="text-align: right;">
+                 <div style="font-weight: 500; color: var(--text-primary);"><%= Current.user.email_address %></div>
+                 <%= link_to "Logout", session_path, data: { turbo_method: :delete }, style: "font-size: 0.75rem; color: var(--accent-color); text-decoration: none;" %>
+               </div>
+               <div class="user-avatar" style="background-image: url('https://ui-avatars.com/api/?name=<%= Current.user.email_address %>&background=random'); background-size: cover;"></div>
+             <% else %>
+               <div style="display: flex; gap: 0.75rem; align-items: center;">
+                 <%= link_to "Login", new_session_path, style: "color: var(--text-secondary); text-decoration: none; font-size: 0.875rem; font-weight: 500;" %>
+                 <%= link_to "Sign Up", new_registration_path, class: "download-btn", style: "padding: 0.5rem 1.25rem; font-size: 0.875rem; box-shadow: 0 4px 6px -1px rgba(236, 72, 153, 0.3);" %>
+               </div>
+             <% end %>
+           </div>
+        </header>
+        
+        <main class="main-content">
+          <%= yield %>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

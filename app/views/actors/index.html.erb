@@ -1,0 +1,17 @@
+<% content_for :title, "Actors" %>
+
+<div class="actors-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));">
+  <% @actors.each do |actor| %>
+    <%= link_to actor_path(actor), class: "actor-card", style: "background: var(--sidebar-bg); padding: 1.5rem; border-radius: 1rem;" do %>
+      <% if actor.thumb_path.present? %>
+        <img src="<%= actor.thumb_path %>" class="actor-thumb" style="width: 140px; height: 140px;" alt="<%= actor.name %>" onerror="this.src='https://ui-avatars.com/api/?name=<%= actor.name %>&background=random'">
+      <% else %>
+        <div class="actor-thumb" style="width: 140px; height: 140px; background: #0f172a; display: flex; align-items: center; justify-content: center; color: #475569; margin: 0 auto 0.5rem auto;">
+          <i class="fas fa-user fa-3x"></i>
+        </div>
+      <% end %>
+      <div style="font-size: 1rem; font-weight: 600; margin-top: 0.5rem;"><%= actor.name %></div>
+      <div style="font-size: 0.75rem; color: var(--text-secondary);"><%= actor.movies.count %> Movies</div>
+    <% end %>
+  <% end %>
+</div>

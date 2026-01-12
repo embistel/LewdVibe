@@ -1,0 +1,42 @@
+<div style="max-width: 400px; margin: 4rem auto; padding: 2rem; background: var(--sidebar-bg); border-radius: 1rem; border: 1px solid var(--card-bg);">
+  <h1 style="text-align: center; margin-bottom: 2rem; color: var(--accent-color);">Join LewdVibe</h1>
+
+  <%= form_with model: @user, url: registrations_path, local: true do |f| %>
+    <% if @user.errors.any? %>
+      <div style="background: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; font-size: 0.875rem;">
+        <ul style="margin: 0; padding-left: 1.25rem;">
+          <% @user.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div style="margin-bottom: 1.5rem;">
+      <%= f.label :email_address, "Email Address", style: "display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.875rem;" %>
+      <%= f.email_field :email_address, required: true, autofocus: true, autocomplete: "email", 
+            placeholder: "you@example.com", 
+            class: "auth-input" %>
+    </div>
+
+    <div style="margin-bottom: 1.5rem;">
+      <%= f.label :password, "Password", style: "display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.875rem;" %>
+      <%= f.password_field :password, required: true, autocomplete: "new-password", 
+            placeholder: "Minimum 6 characters",
+            class: "auth-input" %>
+    </div>
+
+    <div style="margin-bottom: 2rem;">
+      <%= f.label :password_confirmation, "Confirm Password", style: "display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.875rem;" %>
+      <%= f.password_field :password_confirmation, required: true, autocomplete: "new-password",
+            placeholder: "Re-type password",
+            class: "auth-input" %>
+    </div>
+
+    <%= f.submit "Create Account", class: "download-btn", style: "width: 100%; justify-content: center; cursor: pointer; border: none;" %>
+  <% end %>
+
+  <div style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: var(--text-secondary);">
+    Already have an account? <%= link_to "Sign In", new_session_path, style: "color: var(--accent-color); text-decoration: none;" %>
+  </div>
+</div>

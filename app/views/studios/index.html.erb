@@ -1,0 +1,10 @@
+<% content_for :title, "Studios" %>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem;">
+  <% @studios.each do |studio| %>
+    <%= link_to studio_path(studio), class: "nav-item", style: "background: var(--sidebar-bg); padding: 1.5rem; text-align: center; border-radius: 0.5rem; color: white;" do %>
+      <div style="font-size: 1.25rem; font-weight: 600;"><%= studio.name %></div>
+      <div style="color: var(--text-secondary); font-size: 0.875rem;"><%= studio.movies.count %> Movies</div>
+    <% end %>
+  <% end %>
+</div>

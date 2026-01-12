@@ -1,0 +1,10 @@
+<% content_for :title, "Directors" %>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem;">
+  <% @directors.each do |director| %>
+    <%= link_to director_path(director), class: "nav-item", style: "background: var(--sidebar-bg); padding: 1.5rem; text-align: center; border-radius: 0.5rem; color: white;" do %>
+      <div style="font-size: 1.1rem; font-weight: 600;"><%= director.name %></div>
+      <div style="color: var(--text-secondary); font-size: 0.8rem;"><%= director.movies.count %> Movies</div>
+    <% end %>
+  <% end %>
+</div>
