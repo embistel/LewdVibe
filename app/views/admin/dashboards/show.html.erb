@@ -1,0 +1,32 @@
+<% content_for :title, "Admin Dashboard" %>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+  <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 1rem; border: 1px solid #334155;">
+    <div style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.5rem;">Total Movies</div>
+    <div style="font-size: 2rem; font-weight: 700; color: var(--accent-color);"><%= @movie_count %></div>
+  </div>
+  
+  <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 1rem; border: 1px solid #334155;">
+    <div style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.5rem;">Total Users</div>
+    <div style="font-size: 2rem; font-weight: 700; color: var(--text-primary);"><%= @user_count %></div>
+  </div>
+
+  <div style="background: var(--sidebar-bg); padding: 1.5rem; border-radius: 1rem; border: 1px solid #334155;">
+    <div style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.5rem;">Media Sources</div>
+    <div style="font-size: 2rem; font-weight: 700; color: #10b981;"><%= @source_count %></div>
+  </div>
+</div>
+
+<div style="margin-top: 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+  <div style="background: var(--sidebar-bg); padding: 2rem; border-radius: 1rem; border: 1px solid #334155;">
+    <h3 style="margin-bottom: 1rem;">User Management</h3>
+    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">View and manage registered users in the system.</p>
+    <%= link_to "Manage Users", admin_users_path, class: "download-btn" %>
+  </div>
+
+  <div style="background: var(--sidebar-bg); padding: 2rem; border-radius: 1rem; border: 1px solid #334155;">
+    <h3 style="margin-bottom: 1rem;">Media Sources</h3>
+    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Configure folders where movies are stored.</p>
+    <%= link_to "Manage Sources", admin_sources_path, class: "download-btn", style: "background: #334155;" %>
+  </div>
+</div>

@@ -13,10 +13,22 @@ Rails.application.routes.draw do
     member do
       get :poster
       get :download_subtitle
+      get :storyboard_image
+      get :subtitles_data
     end
   end
   resources :registrations, only: [:new, :create]
   resources :actors, only: [:index, :show]
   resources :studios, only: [:index, :show]
   resources :directors, only: [:index, :show]
+
+  resource :profile, only: [:show, :edit, :update, :destroy]
+  
+  namespace :admin do
+    root to: "dashboards#show"
+    resources :users, only: [:index, :destroy]
+    resources :sources, only: [:index, :create, :destroy] do
+      post :sync, on: :collection
+    end
+  end
 end

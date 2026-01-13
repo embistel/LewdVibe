@@ -13,9 +13,9 @@
     <% end %>
 
     <div style="margin-bottom: 1.5rem;">
-      <%= f.label :email_address, "Email Address", style: "display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.875rem;" %>
-      <%= f.email_field :email_address, required: true, autofocus: true, autocomplete: "email", 
-            placeholder: "you@example.com", 
+      <%= f.label :email_address, "Email or Username", style: "display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.875rem;" %>
+      <%= f.text_field :email_address, required: true, autofocus: true, 
+            placeholder: "you@example.com or username", 
             class: "auth-input" %>
     </div>
 

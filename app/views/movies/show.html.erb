@@ -11,25 +11,40 @@
     <% end %>
 
     <div style="margin-top: 2rem;">
+      <h3 style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 1rem; letter-spacing: 0.1em;">Subtitles</h3>
       <% if @subtitles.any? %>
-        <% if authenticated? %>
-          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-            <% @subtitles.each do |label, path| %>
-              <%= link_to download_subtitle_movie_path(@movie, lang: label), class: "download-btn" do %>
-                <i class="fas fa-closed-captioning"></i> <%= label %> (.srt)
-              <% end %>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <% @subtitles.each do |label, path| %>
+            <button class="lang-btn <%= 'active' if label == @current_lang %>" 
+                    data-lang="<%= label %>" 
+                    title="Select for storyboard">
+              <i class="fas fa-closed-captioning"></i> <%= label %>
+            </button>
+          <% end %>
+        </div>
+
+        <div id="subtitle-download-container" class="selected-subtitle-info" style="<%= 'display: none;' unless authenticated? %>">
+          <h4>Selected Subtitle</h4>
+          <div style="font-weight: 600; font-size: 1rem;" id="selected-lang-display"><%= @current_lang %></div>
+          <% if authenticated? %>
+            <%= link_to download_subtitle_movie_path(@movie, lang: @current_lang), 
+                id: "subtitle-download-link", 
+                class: "download-link-box" do %>
+              <i class="fas fa-download"></i> Download .srt
             <% end %>
-          </div>
-        <% else %>
-          <div style="padding: 1.5rem; background: #1e293b; border-radius: 0.5rem; text-align: center; border: 1px dashed var(--accent-color);">
-            <i class="fas fa-lock" style="color: var(--accent-color); margin-bottom: 0.5rem; font-size: 1.25rem;"></i>
-            <p style="font-size: 0.875rem; color: var(--text-primary); margin-bottom: 1rem;">Login required to download subtitles</p>
-            <%= link_to "Sign In to Download", new_session_path, class: "download-btn", style: "width: 100%; justify-content: center; font-size: 0.75rem; padding: 0.5rem;" %>
+          <% end %>
+        </div>
+
+        <% unless authenticated? %>
+          <div style="margin-top: 1.5rem; padding: 1rem; background: #1e293b; border-radius: 0.5rem; text-align: center; border: 1px dashed var(--accent-color);">
+            <i class="fas fa-lock" style="color: var(--accent-color); margin-bottom: 0.5rem; font-size: 1.125rem;"></i>
+            <p style="font-size: 0.75rem; color: var(--text-primary); margin-bottom: 0.75rem;">Login to download</p>
+            <%= link_to "Sign In", new_session_path, class: "download-btn", style: "width: 100%; justify-content: center; font-size: 0.7rem; padding: 0.4rem;" %>
           </div>
         <% end %>
       <% else %>
         <div style="padding: 1rem; background: #1e293b; border-radius: 0.5rem; color: #94a3b8; font-size: 0.875rem; text-align: center;">
-          <i class="fas fa-info-circle"></i> No subtitle found in directory
+          <i class="fas fa-info-circle"></i> No subtitles found
         </div>
       <% end %>
     </div>
@@ -84,9 +99,203 @@
       </div>
     </div>
 
-    <div style="margin-top: 3rem; padding: 2rem; background: #1e293b; border-radius: 0.5rem; border: 1px dashed #475569;">
-       <h3 style="color: var(--text-secondary); margin-bottom: 0.5rem;"><i class="fas fa-tasks"></i> Storyboard (Planned)</h3>
-       <p style="color: #64748b; font-size: 0.875rem;">Soon you'll be able to see a visual storyboard of the movie with screenshots synced to subtitles.</p>
+    <div style="margin-top: 4rem;">
+      <h3 style="color: var(--text-primary); margin-bottom: 2rem; border-left: 4px solid var(--accent-color); padding-left: 1rem;">Storyboard</h3>
+      
+      <% if @storyboard_images.any? %>
+        <div id="storyboard-viewer" class="storyboard-container" 
+             data-images='<%= @storyboard_images.to_json.html_safe %>'
+             data-subtitles='<%= @parsed_subtitles.to_json.html_safe %>'
+             data-movie-id="<%= @movie.id %>">
+          
+          <div class="storyboard-display">
+            <div class="storyboard-image-frame">
+              <img id="story-image" src="<%= storyboard_image_movie_path(@movie, filename: @storyboard_images.first[:filename]) %>" alt="Storyboard Image">
+              <div id="story-subtitle" class="storyboard-subtitle">
+                <!-- Subtitle text goes here -->
+              </div>
+            </div>
+          </div>
+
+          <div class="storyboard-controls">
+            <div class="storyboard-time-display">
+              <span id="current-time">00:00:00</span> / <span id="total-duration">--:--:--</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <button id="story-play-pause" class="story-play-btn" title="Auto Play (Jump to next subtitle)">
+                <i class="fas fa-play"></i>
+              </button>
+              <input type="range" id="story-slider" class="story-slider" min="0" max="100" step="0.01" value="0">
+            </div>
+          </div>
+        </div>
+
+        <script>
+          document.addEventListener("turbo:load", function() {
+            const viewer = document.getElementById("storyboard-viewer");
+            if (!viewer) return;
+
+            console.log("Storyboard viewer initialized");
+
+            const images = JSON.parse(viewer.dataset.images);
+            let subtitles = JSON.parse(viewer.dataset.subtitles);
+            const movieId = viewer.dataset.movieId;
+
+            const slider = document.getElementById("story-slider");
+            const imgEl = document.getElementById("story-image");
+            const subEl = document.getElementById("story-subtitle");
+            const timeEl = document.getElementById("current-time");
+            const totalEl = document.getElementById("total-duration");
+            const playPauseBtn = document.getElementById("story-play-pause");
+            
+            const langBtns = document.querySelectorAll(".lang-btn");
+            const langDisplay = document.getElementById("selected-lang-display");
+            const downloadLink = document.getElementById("subtitle-download-link");
+
+            let isPlaying = false;
+            let playInterval = null;
+
+            const lastImgTime = images.length > 0 ? images[images.length - 1].time : 0;
+            const lastSubTime = subtitles.length > 0 ? subtitles[subtitles.length - 1].end : 0;
+            const maxTime = Math.max(lastImgTime, lastSubTime);
+
+            slider.max = maxTime;
+            totalEl.textContent = formatSeconds(maxTime);
+
+            function formatSeconds(s) {
+              const h = Math.floor(s / 3600).toString().padStart(2, '0');
+              const m = Math.floor((s % 3600) / 60).toString().padStart(2, '0');
+              const sec = Math.floor(s % 60).toString().padStart(2, '0');
+              return `${h}:${m}:${sec}`;
+            }
+
+            function updateViewer(currentTime) {
+              timeEl.textContent = formatSeconds(currentTime);
+              
+              let activeImage = images[0];
+              for (let i = 0; i < images.length; i++) {
+                if (images[i].time <= currentTime) {
+                  activeImage = images[i];
+                } else {
+                  break;
+                }
+              }
+              
+              if (activeImage) {
+                const newSrc = `/movies/${movieId}/storyboard_image?filename=${encodeURIComponent(activeImage.filename)}`;
+                if (imgEl.src !== window.location.origin + newSrc) {
+                  imgEl.src = newSrc;
+                }
+              }
+
+              if (subtitles && subtitles.length > 0) {
+                let closestSub = subtitles[0];
+                let minDiff = Math.abs(subtitles[0].start - currentTime);
+                const activeSub = subtitles.find(s => currentTime >= s.start && currentTime <= s.end);
+                
+                if (activeSub) {
+                  closestSub = activeSub;
+                } else {
+                  subtitles.forEach(s => {
+                    const diffStart = Math.abs(s.start - currentTime);
+                    const diffEnd = Math.abs(s.end - currentTime);
+                    const currentMin = Math.min(diffStart, diffEnd);
+                    if (currentMin < minDiff) {
+                      minDiff = currentMin;
+                      closestSub = s;
+                    }
+                  });
+                }
+                subEl.innerHTML = closestSub.text;
+                subEl.style.display = "flex";
+              } else {
+                subEl.innerHTML = "";
+                subEl.style.display = "none";
+              }
+            }
+
+            langBtns.forEach(btn => {
+              btn.addEventListener("click", async () => {
+                const lang = btn.dataset.lang;
+                console.log("Switching language to:", lang);
+                
+                langBtns.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                
+                if (langDisplay) langDisplay.textContent = lang;
+                if (downloadLink) {
+                  downloadLink.href = `/movies/${movieId}/download_subtitle?lang=${encodeURIComponent(lang)}`;
+                }
+                
+                try {
+                  const url = `/movies/${movieId}/subtitles_data?lang=${encodeURIComponent(lang)}`;
+                  const response = await fetch(url);
+                  if (response.ok) {
+                    subtitles = await response.json();
+                    console.log("Loaded subtitles:", subtitles.length);
+                    
+                    const newLastSubTime = subtitles.length > 0 ? subtitles[subtitles.length - 1].end : 0;
+                    const newMaxTime = Math.max(lastImgTime, newLastSubTime);
+                    slider.max = newMaxTime;
+                    totalEl.textContent = formatSeconds(newMaxTime);
+                    
+                    updateViewer(parseFloat(slider.value));
+                  }
+                } catch (e) {
+                  console.error("Failed to fetch subtitles", e);
+                }
+              });
+            });
+
+            function play() {
+              if (isPlaying) return;
+              isPlaying = true;
+              playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+              playPauseBtn.classList.add("playing");
+              
+              playInterval = setInterval(() => {
+                const currentTime = parseFloat(slider.value);
+                const nextSub = subtitles.find(s => s.start > currentTime + 0.1);
+                
+                if (nextSub) {
+                  slider.value = nextSub.start;
+                  updateViewer(nextSub.start);
+                } else {
+                  pause();
+                }
+              }, 200);
+            }
+
+            function pause() {
+              isPlaying = false;
+              playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+              playPauseBtn.classList.remove("playing");
+              if (playInterval) {
+                clearInterval(playInterval);
+                playInterval = null;
+              }
+            }
+
+            playPauseBtn.addEventListener("click", () => {
+              if (isPlaying) pause();
+              else play();
+            });
+
+            slider.addEventListener("input", (e) => {
+              if (isPlaying) pause();
+              updateViewer(parseFloat(e.target.value));
+            });
+            
+            updateViewer(0);
+            document.addEventListener("turbo:before-cache", pause, { once: true });
+          });
+        </script>
+      <% else %>
+        <div style="padding: 3rem; background: var(--sidebar-bg); border-radius: 1rem; text-align: center; color: var(--text-secondary); border: 2px dashed #334155;">
+          <i class="fas fa-images" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+          <p>No storyboard folder (Story/) found for this movie.</p>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

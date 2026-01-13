@@ -116,6 +116,11 @@ body {
 .page-title {
   font-size: 1.25rem;
   font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+  /* Limit width to ensure it doesn't push search bar too much */
 }
 
 .search-form {
@@ -339,4 +344,188 @@ body {
 
 .actor-card:hover .actor-thumb {
   border-color: var(--accent-color);
+}
+
+/* Storyboard Component */
+.storyboard-container {
+  background-color: var(--sidebar-bg);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  border: 1px solid #334155;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  margin-top: 2rem;
+}
+
+.storyboard-display {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.storyboard-image-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-color: #000;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #475569;
+}
+
+.storyboard-image-frame img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.storyboard-subtitle {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8) 40%, rgba(0, 0, 0, 0.9));
+  color: #fff;
+  font-size: 1.25rem;
+  line-height: 1.4;
+  text-align: center;
+  font-weight: 500;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 0 10px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  min-height: 6rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.storyboard-controls {
+  background: #0f172a;
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+}
+
+.storyboard-time-display {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.story-slider {
+  width: 100%;
+  height: 6px;
+  background: #334155;
+  border-radius: 3px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.story-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.story-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.story-play-btn {
+  background: var(--accent-color);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+
+.story-play-btn:hover {
+  background: var(--accent-hover);
+  transform: scale(1.1);
+}
+
+.story-play-btn.playing {
+  background: #ef4444;
+  /* Red for pause/stop feel */
+}
+
+.story-play-btn i {
+  font-size: 1rem;
+}
+
+.lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+  font-family: inherit;
+}
+
+.lang-btn:hover {
+  background-color: #475569;
+}
+
+.lang-btn.active {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+}
+
+.selected-subtitle-info {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 0.5rem;
+  border: 1px solid #334155;
+}
+
+.selected-subtitle-info h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.download-link-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.download-link-box:hover {
+  text-decoration: underline;
 }

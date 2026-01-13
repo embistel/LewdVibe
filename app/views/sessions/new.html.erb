@@ -15,9 +15,9 @@
 
   <%= form_with url: session_path, local: true do |f| %>
     <div style="margin-bottom: 1.5rem;">
-      <%= f.label :email_address, "Email Address", style: "display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.875rem;" %>
-      <%= f.email_field :email_address, required: true, autofocus: true, autocomplete: "email", 
-            placeholder: "you@example.com", 
+      <%= f.label :email_address, "Email or Username", style: "display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.875rem;" %>
+      <%= f.text_field :email_address, required: true, autofocus: true, 
+            placeholder: "Email", 
             class: "auth-input",
             value: params[:email_address] %>
     </div>

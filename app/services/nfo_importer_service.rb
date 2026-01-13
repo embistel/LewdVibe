@@ -1,14 +1,21 @@
 class NfoImporterService
   require 'nokogiri'
 
-  BASE_PATHS = [
-    '/mnt/diana/embistel/JavRegular',
-    '/mnt/diana/embistel/JavUncensored',
-    '/mnt/diana/embistel/JavFemdom'
-  ]
-
   def call
-    BASE_PATHS.each do |base_path|
+    base_paths = LibrarySource.pluck(:path)
+    
+    # 1. Clean up movies that are no longer in any registered source
+    all_movies = Movie.all
+    all_movies.each do |movie|
+      is_managed = base_paths.any? { |bp| movie.path.start_with?(bp) }
+      unless is_managed && File.exist?(movie.path)
+        movie.destroy
+        puts "Deleted orphan movie: #{movie.title}"
+      end
+    end
+
+    # 2. Import/Update movies from base paths
+    base_paths.each do |base_path|
       puts "Starting import from #{base_path}..."
       unless Dir.exist?(base_path)
         puts "Directory does not exist: #{base_path}"

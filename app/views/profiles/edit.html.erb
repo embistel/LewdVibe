@@ -1,0 +1,32 @@
+<% content_for :title, "Change Password" %>
+
+<div style="max-width: 500px;">
+  <div style="background: var(--sidebar-bg); padding: 2.5rem; border-radius: 1.5rem; border: 1px solid #334155;">
+    <%= form_with model: @user, url: profile_path, method: :patch, local: true do |f| %>
+      <% if @user.errors.any? %>
+        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 0.75rem; padding: 1rem; margin-bottom: 2rem; color: #f87171; font-size: 0.875rem;">
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <% @user.errors.full_messages.each do |msg| %>
+              <li><i class="fas fa-exclamation-circle mr-2"></i> <%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div style="margin-bottom: 1.5rem;">
+        <%= f.label :password, "New Password", style: "display: block; font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 0.625rem;" %>
+        <%= f.password_field :password, class: "auth-input", style: "width: 100%;", placeholder: "••••••••" %>
+      </div>
+
+      <div style="margin-bottom: 2rem;">
+        <%= f.label :password_confirmation, "Confirm New Password", style: "display: block; font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 0.625rem;" %>
+        <%= f.password_field :password_confirmation, class: "auth-input", style: "width: 100%;", placeholder: "••••••••" %>
+      </div>
+
+      <div style="display: flex; gap: 1rem;">
+        <%= f.submit "Update Password", class: "download-btn", style: "flex: 1; justify-content: center;" %>
+        <%= link_to "Cancel", profile_path, style: "padding: 0.75rem 1.5rem; color: var(--text-secondary); text-decoration: none; display: flex; align-items: center; justify-content: center; font-weight: 600;" %>
+      </div>
+    <% end %>
+  </div>
+</div>
