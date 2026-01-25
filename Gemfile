@@ -67,4 +67,4 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "bootsnap", "~> 1.20"
+gem "bootsnap", "~> 1.21"
