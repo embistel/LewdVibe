@@ -3,6 +3,12 @@ class Admin::SourcesController < Admin::BaseController
     @sources = LibrarySource.all
     @new_source = LibrarySource.new
     @total_movies = Movie.count
+    @generating_movie = Movie.find_by(generating_subtitle: true)
+    if @generating_movie
+      @generating_movies = Movie.where(generating_subtitle: true).where.not(id: @generating_movie.id)
+    else
+      @generating_movies = Movie.where(generating_subtitle: true)
+    end
   end
 
   def create
@@ -35,6 +41,11 @@ class Admin::SourcesController < Admin::BaseController
     # For now, let's just trigger the importer service.
     NfoImporterService.new.call
     redirect_to admin_sources_path, notice: "Library sync started."
+  end
+
+  def generate_subtitles
+    count = SubtitleGeneratorService.new.call
+    redirect_to admin_sources_path, notice: "Queued #{count} subtitle generation jobs in the background."
   end
 
   private

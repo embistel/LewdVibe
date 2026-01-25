@@ -400,7 +400,7 @@ PLATFORMS
 
 DEPENDENCIES
   bcrypt (~> 3.1.7)
-  bootsnap
+  bootsnap (~> 1.20)
   brakeman
   bundler-audit
   capybara

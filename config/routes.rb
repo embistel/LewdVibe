@@ -29,6 +29,7 @@ Rails.application.routes.draw do
     resources :users, only: [:index, :destroy]
     resources :sources, only: [:index, :create, :destroy] do
       post :sync, on: :collection
+      post :generate_subtitles, on: :collection
     end
   end
 end

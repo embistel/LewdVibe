@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_13_100731) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_13_114658) do
   create_table "actors", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name"
@@ -43,6 +43,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_13_100731) do
   create_table "movies", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "director_id"
+    t.boolean "generating_subtitle"
     t.string "path"
     t.text "plot"
     t.string "poster_path"
